@@ -2,10 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
+import { Header } from "@/components/common/header";
+import { Footer } from "@/components/common/footer";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
+    <div className="">
+      <Header />
+
       <main className="py-16">
         <div className="container mx-auto px-4">
           {/* Hero Section */}
@@ -162,6 +166,7 @@ export default function AboutPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
