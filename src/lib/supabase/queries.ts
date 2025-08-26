@@ -47,19 +47,3 @@ export async function getEventById(id: string) {
 
   return data as Event;
 }
-
-export async function isUserAdmin(userId: string) {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from("admin_users")
-    .select("id")
-    .eq("id", userId)
-    .single();
-
-  if (error) {
-    return false;
-  }
-
-  return !!data;
-}

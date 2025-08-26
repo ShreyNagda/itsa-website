@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentAdminUser } from "./supabase/admin-queries";
 
 export async function createEvent(prevState: unknown, formData: FormData) {
   if (!formData) return { error: "Form data is missing" };
@@ -22,11 +23,7 @@ export async function createEvent(prevState: unknown, formData: FormData) {
   const { data: session } = await supabase.auth.getUser();
   if (!session.user) return { error: "Authentication required" };
 
-  const { data: adminUser } = await supabase
-    .from("admin_users")
-    .select("id")
-    .eq("email", session.user.email)
-    .single();
+  const adminUser = await getCurrentAdminUser();
   if (!adminUser) return { error: "Admin privileges required" };
 
   // Expecting media URLs already uploaded
@@ -74,16 +71,12 @@ export async function updateEvent(
   const { data: session } = await supabase.auth.getUser();
   if (!session.user) return { error: "Authentication required" };
 
-  const { data: adminUser } = await supabase
-    .from("admin_users")
-    .select("id")
-    .eq("email", session.user.email)
-    .single();
+  const adminUser = await getCurrentAdminUser();
   if (!adminUser) return { error: "Admin privileges required" };
 
   // Expecting media URLs already uploaded
   const mediaUrls = formData.getAll("media_urls").map((v) => v.toString());
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("events")
     .update({
       title,
@@ -98,7 +91,7 @@ export async function updateEvent(
     })
     .eq("id", eventId);
   if (error) return { error: error.message };
-  console.log(data);
+
   revalidatePath("/admin/events");
   revalidatePath("/");
   return { success: true };
@@ -109,11 +102,7 @@ export async function deleteEvent(eventId: string) {
   const { data: session } = await supabase.auth.getUser();
   if (!session.user) throw new Error("Authentication required");
 
-  const { data: adminUser } = await supabase
-    .from("admin_users")
-    .select("id")
-    .eq("email", session.user.email)
-    .single();
+  const adminUser = await getCurrentAdminUser();
   if (!adminUser) throw new Error("Admin privileges required");
 
   // Delete event from DB

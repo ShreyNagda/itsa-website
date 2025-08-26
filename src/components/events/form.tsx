@@ -22,10 +22,11 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { Loader2, Trash2, ArrowRight, ArrowLeft } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import type { Event } from "@/lib/supabase/types";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface SubmitButtonProps {
   isEditing: boolean;
@@ -97,15 +98,15 @@ export default function EventForm({
 
     const uploadedFiles: (FileWithPreview | null)[] = await Promise.all(
       newFiles.map(async (file) => {
-        const fileName = file.name;
+        const fileName = file.name.split(" ").join("-");
         const filePath = `events/${fileName}`;
 
         const { error } = await supabase.storage
           .from("media")
           .upload(filePath, file);
-        if (error) {
-          console.error("Upload failed:", error.message);
-          return null;
+        if (error && error?.message !== "The resource already exists") {
+          console.error("Upload failed:", error?.name);
+          toast.error(error.message);
         }
 
         const url = supabase.storage.from("media").getPublicUrl(filePath)
@@ -158,14 +159,28 @@ export default function EventForm({
   };
 
   useEffect(() => {
-    if (state?.success) router.push("/admin/events");
-  }, [state, router]);
+    if (!state) return;
+
+    if (state.success) {
+      toast.success(
+        event ? "Event updated successfully" : "Event created successfully"
+      );
+      router.push("/admin/events");
+    }
+
+    if (state.error) {
+      toast.error(state.error);
+    }
+  }, [state, router, event]);
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="font-geist">{title}</CardTitle>
-        <CardDescription className="font-manrope">
+        <Button variant="ghost" className="w-fit" onClick={() => router.back()}>
+          <ArrowLeft />
+        </Button>
+        <CardTitle className="font-geist text-3xl font-bold">{title}</CardTitle>
+        <CardDescription className="font-manrope text-muted-foreground">
           {description}
         </CardDescription>
       </CardHeader>
@@ -240,7 +255,9 @@ export default function EventForm({
 
             {/* Media Upload */}
             <div className="space-y-2">
-              <Label htmlFor="media">Media (Images/Videos, max 5)</Label>
+              <Label htmlFor="media">
+                Media (Images/Videos, max 5, Place poster as first)
+              </Label>
               <Input
                 type="file"
                 name="media"
@@ -277,7 +294,7 @@ export default function EventForm({
                             variant="secondary"
                             onClick={() => moveFile(idx, idx - 1)}
                           >
-                            <ArrowUp className="w-4 h-4" />
+                            <ArrowLeft className="w-4 h-4" />
                           </Button>
                         )}
                         {idx < selectedFiles.length - 1 && (
@@ -287,7 +304,7 @@ export default function EventForm({
                             variant="secondary"
                             onClick={() => moveFile(idx, idx + 1)}
                           >
-                            <ArrowDown className="w-4 h-4" />
+                            <ArrowRight className="w-4 h-4" />
                           </Button>
                         )}
                         <Button

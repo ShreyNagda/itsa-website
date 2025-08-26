@@ -26,8 +26,9 @@ export default async function AdminDashboard() {
 
   // Get admin users count
   const { count: adminCount } = await supabase
-    .from("admin_users")
-    .select("*", { count: "exact", head: true });
+    .from("users")
+    .select("*", { count: "exact", head: true })
+    .in("role", ["admin", "super_admin"]);
 
   return (
     <div className="space-y-8">

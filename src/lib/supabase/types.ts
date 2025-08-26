@@ -13,9 +13,10 @@ export interface Event {
   updated_at: string;
 }
 
-export interface AdminUser {
+export interface User {
   id: string;
   email: string;
+  role: "user" | "admin" | "super_admin";
   created_at: string;
   updated_at: string;
 }
@@ -28,10 +29,10 @@ export interface Database {
         Insert: Omit<Event, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<Event, "id" | "created_at" | "updated_at">>;
       };
-      admin_users: {
-        Row: AdminUser;
-        Insert: Omit<AdminUser, "id" | "created_at" | "updated_at">;
-        Update: Partial<Omit<AdminUser, "id" | "created_at" | "updated_at">>;
+      users: {
+        Row: User;
+        Insert: Omit<User, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<User, "id" | "created_at" | "updated_at">>;
       };
     };
   };

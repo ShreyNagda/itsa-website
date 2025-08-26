@@ -2,12 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { adminSignOut } from "@/lib/actions";
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -79,7 +78,7 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem asChild>
+            {/* <DropdownMenuItem asChild>
               <Link
                 href="/admin/settings"
                 className="flex items-center gap-2 font-manrope"
@@ -88,7 +87,7 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
                 Settings
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator /> */}
             <DropdownMenuItem asChild>
               <form action={adminSignOut} className="w-full">
                 <button

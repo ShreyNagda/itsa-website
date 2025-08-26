@@ -30,7 +30,6 @@ export default function DeleteEventDialog({
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      ("use server");
       await deleteEvent(eventId); // server action
       router.refresh();
     } catch (err) {
