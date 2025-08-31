@@ -21,6 +21,15 @@ export interface User {
   updated_at: string;
 }
 
+type FeaturedMedia = {
+  id: number;
+  type: "image" | "video";
+  url: string;
+  title?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export interface Database {
   public: {
     Tables: {
@@ -34,6 +43,15 @@ export interface Database {
         Insert: Omit<User, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<User, "id" | "created_at" | "updated_at">>;
       };
+      featuredMedia: {
+        Row: FeaturedMedia;
+        Insert: Omit<FeaturedMedia, "id" | "created_at" | "updated_at">;
+        Update: Partial<
+          Omit<FeaturedMedia, "id" | "created_at" | "updated_at">
+        >;
+      };
     };
   };
 }
+
+export type EventStatus = "upcoming" | "ongoing" | "completed";

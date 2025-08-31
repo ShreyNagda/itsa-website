@@ -23,7 +23,7 @@ export default async function AdminLoginPage() {
     const { data: adminUser } = await supabase
       .from("admin_users")
       .select("id")
-      .eq("email", session.user.email)
+      .eq("id", session.user.id)
       .single();
 
     if (adminUser) {

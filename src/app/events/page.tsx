@@ -1,15 +1,18 @@
 import { getEvents } from "@/lib/supabase/queries";
-import { EventCard } from "@/components/events/event-card";
+import EventsSection from "@/components/events/events-section";
 import { Header } from "@/components/common/header";
 import Footer from "@/components/common/footer";
+import { Event } from "@/lib/supabase/types";
 
 export default async function EventsPage() {
-  const allEvents = await getEvents();
+  const allEvents: Event[] = await getEvents();
+
   const upcomingEvents = allEvents.filter(
     (event) => event.status === "upcoming"
   );
   const ongoingEvents = allEvents.filter((event) => event.status === "ongoing");
   const pastEvents = allEvents.filter((event) => event.status === "completed");
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -22,52 +25,12 @@ export default async function EventsPage() {
             students.
           </p>
         </div>
-
         {/* Upcoming Events */}
-        {upcomingEvents.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-primary mb-6 flex items-center gap-2">
-              <div className="w-1 h-6 bg-primary rounded-full"></div>
-              Upcoming Events
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {upcomingEvents.map((event) => (
-                <EventCard key={event.id} event={event} showViewButton />
-              ))}
-            </div>
-          </section>
-        )}
-
+        <EventsSection title="Upcoming Events" events={upcomingEvents} />
         {/* Ongoing Events */}
-        {ongoingEvents.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-primary mb-6 flex items-center gap-2">
-              <div className="w-1 h-6 bg-accent rounded-full"></div>
-              Ongoing Events
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {ongoingEvents.map((event) => (
-                <EventCard key={event.id} event={event} showViewButton />
-              ))}
-            </div>
-          </section>
-        )}
-
+        <EventsSection title="Ongoing Events" events={ongoingEvents} />
         {/* Past Events */}
-        {pastEvents.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-primary mb-6 flex items-center gap-2">
-              <div className="w-1 h-6 bg-muted-foreground rounded-full"></div>
-              Past Events
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastEvents.map((event) => (
-                <EventCard key={event.id} event={event} showViewButton />
-              ))}
-            </div>
-          </section>
-        )}
-
+        <EventsSection title="Past Events" events={pastEvents} />
         {allEvents.length === 0 && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📅</div>

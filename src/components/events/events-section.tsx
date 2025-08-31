@@ -1,74 +1,64 @@
-import { getUpcomingEvents, getPastEvents } from "@/lib/supabase/queries";
-import EventCard from "./event-card";
-import { Button } from "@/components/ui/button";
+import { Event } from "@/lib/supabase/types";
+import { EventCard } from "@/components/events/event-card";
 import Link from "next/link";
 
-export default async function EventsSection() {
-  const upcomingEvents = await getUpcomingEvents();
-  const pastEvents = await getPastEvents();
+interface EventsSectionProps {
+  events: Event[];
+  title: string;
+  maxEvents?: number;
+  showViewAll?: boolean;
+  viewAllLink?: string;
+}
+
+export default function EventsSection({
+  events,
+  title,
+  maxEvents,
+  showViewAll = false,
+  viewAllLink = "/events",
+}: EventsSectionProps) {
+  // Sort events by event_date in descending order
+  const sortedEvents = [...events].sort(
+    (a, b) =>
+      new Date(b.event_date).getTime() - new Date(a.event_date).getTime()
+  );
+
+  // Slice events if maxEvents is provided
+  const displayedEvents = maxEvents
+    ? sortedEvents.slice(0, maxEvents)
+    : sortedEvents;
 
   return (
-    <section className="py-16 bg-muted/30">
-      <div className="container mx-auto px-4">
-        {/* Upcoming Events */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="font-geist text-3xl font-bold text-primary mb-2">
-                Upcoming Events
-              </h2>
-              <p className="font-manrope text-muted-foreground">
-                Don&apos;t miss out on these exciting opportunities
-              </p>
-            </div>
-            <Button asChild variant="outline">
-              <Link href="/events" className="font-manrope">
-                View All Events
-              </Link>
-            </Button>
-          </div>
-
-          {upcomingEvents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {upcomingEvents.slice(0, 3).map((event) => (
-                <EventCard key={event.id} event={event} showViewButton={true} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="font-manrope text-muted-foreground text-lg">
-                No upcoming events at the moment. Check back soon!
-              </p>
-            </div>
-          )}
+    <section className="mb-12">
+      <h2 className="text-2xl font-semibold text-primary mb-6 flex items-center gap-2">
+        <div className="w-1 h-6 bg-primary rounded-full"></div>
+        {title}
+      </h2>
+      {displayedEvents.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayedEvents.map((event) => (
+            <EventCard key={event.id} event={event} showViewButton />
+          ))}
         </div>
-
-        {/* Past Events */}
-        <div>
-          <div className="mb-8">
-            <h2 className="font-geist text-3xl font-bold text-primary mb-2">
-              Past Events
-            </h2>
-            <p className="font-manrope text-muted-foreground">
-              See what we&apos;ve accomplished together
-            </p>
-          </div>
-
-          {pastEvents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastEvents.slice(0, 3).map((event) => (
-                <EventCard key={event.id} event={event} showViewButton={true} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="font-manrope text-muted-foreground text-lg">
-                No past events to display yet.
-              </p>
-            </div>
-          )}
+      ) : (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">📅</div>
+          <h3 className="text-xl font-semibold text-primary mb-2">
+            No {title} Yet
+          </h3>
+          <p className="text-muted-foreground">Check back soon for updates!</p>
         </div>
-      </div>
+      )}
+      {showViewAll && (
+        <div className="text-center mt-8">
+          <Link
+            href={viewAllLink}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          >
+            View All
+          </Link>
+        </div>
+      )}
     </section>
   );
 }

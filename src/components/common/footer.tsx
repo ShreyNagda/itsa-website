@@ -1,9 +1,42 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState, useEffect, useActionState } from "react";
+import { toast } from "sonner";
+import { useFormStatus } from "react-dom";
+import { subscribeToNewsletter } from "@/lib/newsletter-action";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      className="font-manrope"
+      type="submit"
+      disabled={pending}
+    >
+      {pending ? "Subscribing..." : "Subscribe"}
+    </Button>
+  );
+}
 
 export function FooterComponent() {
+  const [state, formAction] = useActionState(subscribeToNewsletter, null);
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    if (state?.success) {
+      toast.success(`Thank you for subscribing with ${state.email}!`);
+      setEmail("");
+    } else if (state?.error) {
+      toast.error(state.error.toString());
+    }
+  }, [state]);
+
   return (
     <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-12">
@@ -33,7 +66,6 @@ export function FooterComponent() {
               passionate IT students and advance your career in technology.
             </p>
           </div>
-
           {/* Quick Links */}
           <div>
             <h3 className="font-geist text-lg font-semibold mb-4">
@@ -74,7 +106,6 @@ export function FooterComponent() {
               </li>
             </ul>
           </div>
-
           {/* Newsletter */}
           <div>
             <h3 className="font-geist text-lg font-semibold mb-4">
@@ -83,19 +114,20 @@ export function FooterComponent() {
             <p className="font-manrope text-sm opacity-80 mb-4">
               Subscribe to get notified about upcoming events and opportunities.
             </p>
-            <div className="flex flex-col gap-2">
+            <form className="flex flex-col gap-2" action={formAction}>
               <Input
                 type="email"
+                name="email"
                 placeholder="Your email"
                 className="bg-primary-foreground text-primary"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
-              <Button variant="secondary" size="sm" className="font-manrope">
-                Subscribe
-              </Button>
-            </div>
+              <SubmitButton />
+            </form>
           </div>
         </div>
-
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center">
           <p className="font-manrope text-sm opacity-80">
             © 2025 Information Technology Student Association. All rights
@@ -108,6 +140,5 @@ export function FooterComponent() {
 }
 
 export { FooterComponent as Footer };
-
 // Keep default export for backward compatibility
 export default FooterComponent;
