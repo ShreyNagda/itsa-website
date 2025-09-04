@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Volume2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Announcement } from "@/lib/supabase/types";
 
 export default function AnnouncementRibbon({
   announcements,
 }: {
-  announcements: string[];
+  announcements: Announcement[];
 }) {
   const [index, setIndex] = useState(0);
 
@@ -23,7 +23,7 @@ export default function AnnouncementRibbon({
     <div className="bg-gray-900 text-gray-100 text-sm py-2 px-4 flex items-center justify-center">
       <Volume2 className="w-4 h-4 mr-2 animate-pulse" />
       <span className="transition-opacity duration-500 ease-in-out">
-        {announcements[index]}
+        {announcements[index].content}
       </span>
     </div>
   );

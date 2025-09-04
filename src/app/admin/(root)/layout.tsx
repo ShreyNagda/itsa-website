@@ -15,15 +15,14 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <AdminHeader userEmail={adminUser?.email || ""} />
-      <main className="container mx-auto px-4 py-8">{children}</main>
-    </div>
-  );
-
-  return (
-    <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-8">{children}</main>
-    </div>
+    <>
+      <div className="min-h-screen bg-background hidden lg:block">
+        <AdminHeader userEmail={adminUser?.email || ""} />
+        <main className="container mx-auto px-4 py-8">{children}</main>
+      </div>
+      <div className="bg-background min-h-screen lg:hidden flex items-center justify-center text-lg">
+        Access on a desktop or a laptop
+      </div>
+    </>
   );
 }

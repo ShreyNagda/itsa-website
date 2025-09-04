@@ -6,16 +6,12 @@ import FeaturedMediaSection from "@/components/home/featured-media-section";
 // import FeaturedMediaSection from "@/components/home/featured-media-section";
 import HeroSection from "@/components/home/hero-section";
 import JoinCommunitySection from "@/components/home/join-community-section";
-import { getEvents } from "@/lib/supabase/queries";
-import { Event } from "@/lib/supabase/types";
+import { getAnnouncements, getEvents } from "@/lib/supabase/queries";
+import { Announcement, Event } from "@/lib/supabase/types";
 export default async function Home() {
   const allEvents: Event[] = await getEvents();
 
-  const announcements = [
-    "Registrations are open for Hackathon 2025!",
-    "Join our weekly tech talk on AI this Friday!",
-    "Membership renewals are now available.",
-  ];
+  const announcements: Announcement[] = await getAnnouncements();
 
   type MediaItem = {
     id: number;
