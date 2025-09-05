@@ -50,12 +50,6 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
             Events
           </Link>
           <Link
-            href="/admin/featured"
-            className="font-manrope text-sm font-medium text-foreground hover:text-primary transition-colors"
-          >
-            Featured
-          </Link>
-          <Link
             href="/admin/users"
             className="font-manrope text-sm font-medium text-foreground hover:text-primary transition-colors"
           >

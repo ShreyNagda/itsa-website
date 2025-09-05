@@ -21,22 +21,6 @@ export interface User {
   updated_at: string;
 }
 
-export interface FeaturedMedia {
-  id: number;
-  type: "image" | "video";
-  url: string;
-  title?: string | null;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface Announcement {
-  id: string; // UUID or numeric
-  title: string;
-  content: string;
-  created_at: string; // Supabase timestamp
-}
-
 export interface Database {
   public: {
     Tables: {
@@ -49,18 +33,6 @@ export interface Database {
         Row: User;
         Insert: Omit<User, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<User, "id" | "created_at" | "updated_at">>;
-      };
-      featuredMedia: {
-        Row: FeaturedMedia;
-        Insert: Omit<FeaturedMedia, "id" | "created_at" | "updated_at">;
-        Update: Partial<
-          Omit<FeaturedMedia, "id" | "created_at" | "updated_at">
-        >;
-      };
-      announcements: {
-        Row: Announcement;
-        Insert: Omit<Announcement, "id" | "created_at" | "updated_at">;
-        Update: Partial<Omit<Announcement, "id" | "created_at" | "updated_at">>;
       };
     };
   };

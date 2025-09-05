@@ -99,7 +99,7 @@ export default function EventForm({
     const uploadedFiles: (FileWithPreview | null)[] = await Promise.all(
       newFiles.map(async (file) => {
         const fileName = file.name.split(" ").join("-");
-        const filePath = `events/${fileName}`;
+        const filePath = `${fileName}`;
 
         const { error } = await supabase.storage
           .from("media")
