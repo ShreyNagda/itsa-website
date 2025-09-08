@@ -1,5 +1,5 @@
 import { createClient } from "./server";
-import type { Event } from "./types";
+import type { Announcement, Event, MediaItem } from "./types";
 
 export async function getEvents(status?: "upcoming" | "ongoing" | "completed") {
   const supabase = await createClient();
@@ -46,4 +46,16 @@ export async function getEventById(id: string) {
   }
 
   return data as Event;
+}
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+export async function getAnnouncements(): Promise<Announcement[]> {
+  const res = await fetch(`${baseUrl}/announcements.json`);
+  if (!res.ok) throw new Error("Failed to fetch announcements");
+  return res.json();
+}
+
+export async function getMedia(): Promise<MediaItem[]> {
+  const res = await fetch(`${baseUrl}/media.json`);
+  if (!res.ok) throw new Error("Failed to fetch media");
+  return res.json();
 }

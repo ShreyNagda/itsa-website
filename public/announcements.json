@@ -1,0 +1,11 @@
+[
+  {
+    "content": "Mini project roadmaps starting soon",
+    "type": "info"
+  },
+  {
+    "content": "Hackathon registrations closing soon",
+    "type": "warning"
+  },
+  { "content": "Successfully completed poster competition", "type": "success" }
+]

@@ -2,13 +2,7 @@
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { SectionHeading } from "../common/section-heading";
-
-type MediaItem = {
-  id: number;
-  type: "image" | "video";
-  url: string;
-  title?: string;
-};
+import { MediaItem } from "@/lib/supabase/types";
 
 export default function FeaturedMediaSection({
   media,
@@ -26,14 +20,14 @@ export default function FeaturedMediaSection({
   // Pause all videos except the active one
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
-      if (video && media[index].id !== activeVideoId && !video.paused) {
+      if (video && index !== activeVideoId && !video.paused) {
         video.pause();
       }
     });
   }, [activeVideoId, media]);
 
-  const handleVideoClick = (id: number, index: number) => {
-    if (activeVideoId === id) {
+  const handleVideoClick = (index: number) => {
+    if (activeVideoId === index) {
       // Pause if clicking the same video
       const video = videoRefs.current[index];
       if (video) {
@@ -42,7 +36,7 @@ export default function FeaturedMediaSection({
       }
     } else {
       // Play new video
-      setActiveVideoId(id);
+      setActiveVideoId(index);
       const video = videoRefs.current[index];
       if (video) {
         video.play().catch((e) => console.error("Video play failed:", e));
@@ -58,7 +52,7 @@ export default function FeaturedMediaSection({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
         {media.map((item, index) => (
           <div
-            key={item.id}
+            key={index}
             className="relative group overflow-hidden rounded-lg bg-white shadow hover:shadow-md transition"
           >
             {item.type === "image" ? (
@@ -80,17 +74,17 @@ export default function FeaturedMediaSection({
                   loop
                   muted
                   playsInline
-                  onClick={() => handleVideoClick(item.id, index)}
+                  onClick={() => handleVideoClick(index)}
                 >
                   Your browser does not support the video tag.
                 </video>
-                {activeVideoId !== item.id && (
+                {activeVideoId !== index && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
                     <button
                       className="bg-white p-3 rounded-full text-gray-800 hover:scale-110 transition"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleVideoClick(item.id, index);
+                        handleVideoClick(index);
                       }}
                     >
                       <svg

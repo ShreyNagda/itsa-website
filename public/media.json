@@ -1,0 +1,33 @@
+[
+  {
+    "type": "image",
+    "url": "/data/images/event1.jpg",
+    "title": "Tech Fest 2025"
+  },
+  {
+    "type": "video",
+    "url": "/data/videos/workshop.mp4",
+    "title": "Coding Workshop"
+  },
+  {
+    "type": "image",
+    "url": "/data/images/team.jpg",
+    "title": "Meet Our Team",
+    "id": 2
+  },
+  {
+    "type": "image",
+    "url": "/data/images/session.jpg",
+    "title": "Interactive Session"
+  },
+  {
+    "type": "video",
+    "url": "/data/videos/highlights.mp4",
+    "title": "Event Highlights"
+  },
+  {
+    "type": "image",
+    "url": "/data/images/hackathon.jpg",
+    "title": "Hackathon Moments"
+  }
+]

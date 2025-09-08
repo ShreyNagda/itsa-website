@@ -6,53 +6,14 @@ import FeaturedMediaSection from "@/components/home/featured-media-section";
 // import FeaturedMediaSection from "@/components/home/featured-media-section";
 import HeroSection from "@/components/home/hero-section";
 import JoinCommunitySection from "@/components/home/join-community-section";
-import { getAnnouncements, getEvents } from "@/lib/supabase/queries";
-import { Announcement, Event } from "@/lib/supabase/types";
+import { getAnnouncements, getEvents, getMedia } from "@/lib/supabase/queries";
+import { Announcement, Event, MediaItem } from "@/lib/supabase/types";
 export default async function Home() {
   const allEvents: Event[] = await getEvents();
 
   const announcements: Announcement[] = await getAnnouncements();
 
-  type MediaItem = {
-    id: number;
-    url: string;
-    title: string;
-    type: "image" | "video";
-  };
-
-  const featuredMedia: MediaItem[] = [
-    {
-      type: "image",
-      url: "/images/event1.jpg",
-      title: "Tech Fest 2025",
-      id: 0,
-    },
-    {
-      type: "video",
-      url: "/videos/workshop.mp4",
-      title: "Coding Workshop",
-      id: 1,
-    },
-    { type: "image", url: "/images/team.jpg", title: "Meet Our Team", id: 2 },
-    {
-      type: "image",
-      url: "/images/session.jpg",
-      title: "Interactive Session",
-      id: 3,
-    },
-    {
-      type: "video",
-      url: "/videos/highlights.mp4",
-      title: "Event Highlights",
-      id: 4,
-    },
-    {
-      type: "image",
-      url: "/images/hackathon.jpg",
-      title: "Hackathon Moments",
-      id: 5,
-    },
-  ];
+  const featuredMedia: MediaItem[] = await getMedia();
 
   return (
     <main className="items-center justify-center">

@@ -38,4 +38,15 @@ export interface Database {
   };
 }
 
+export type MediaItem = {
+  url: string;
+  title: string;
+  type: "image" | "video";
+};
+
+export type Announcement = {
+  content: string;
+  type: "info" | "warning" | "success" | "error";
+};
+
 export type EventStatus = "upcoming" | "ongoing" | "completed";
