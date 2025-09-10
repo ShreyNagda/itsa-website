@@ -1,33 +1,32 @@
 [
   {
     "type": "image",
-    "url": "/data/images/event1.jpg",
-    "title": "Tech Fest 2025"
+    "url": "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&q=80&auto=format&fit=crop",
+    "title": "Team collaboration"
   },
   {
     "type": "video",
-    "url": "/data/videos/workshop.mp4",
-    "title": "Coding Workshop"
+    "url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    "title": "Short demo clip"
   },
   {
     "type": "image",
-    "url": "/data/images/team.jpg",
-    "title": "Meet Our Team",
-    "id": 2
+    "url": "https://picsum.photos/seed/itsa-1/1200/800",
+    "title": "Campus moments"
   },
   {
     "type": "image",
-    "url": "/data/images/session.jpg",
-    "title": "Interactive Session"
+    "url": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80&auto=format&fit=crop",
+    "title": "Hardware workshop"
   },
   {
     "type": "video",
-    "url": "/data/videos/highlights.mp4",
-    "title": "Event Highlights"
+    "url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    "title": "Highlights"
   },
   {
     "type": "image",
-    "url": "/data/images/hackathon.jpg",
-    "title": "Hackathon Moments"
+    "url": "https://picsum.photos/seed/itsa-2/1200/800",
+    "title": "Hackathon vibes"
   }
 ]
