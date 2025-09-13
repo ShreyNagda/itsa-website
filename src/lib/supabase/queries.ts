@@ -1,5 +1,6 @@
 import { createClient } from "./server";
 import type { Announcement, Event, MediaItem } from "./types";
+import { validateMediaItems } from "../validators";
 
 export async function getEvents(status?: "upcoming" | "ongoing" | "completed") {
   const supabase = await createClient();
@@ -47,7 +48,18 @@ export async function getEventById(id: string) {
 
   return data as Event;
 }
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+// Ensure we always fetch with an absolute URL on the server.
+// Priority: explicit NEXT_PUBLIC_SITE_URL -> VERCEL_URL -> localhost with PORT fallback.
+const baseUrl = (() => {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (explicit) return explicit;
+
+  const vercel = process.env.VERCEL_URL;
+  if (vercel) return `https://${vercel.replace(/\/$/, "")}`;
+
+  const port = process.env.PORT || "3000";
+  return `http://localhost:${port}`;
+})();
 export async function getAnnouncements(): Promise<Announcement[]> {
   const res = await fetch(`${baseUrl}/announcements.json`);
   if (!res.ok) throw new Error("Failed to fetch announcements");
@@ -57,5 +69,10 @@ export async function getAnnouncements(): Promise<Announcement[]> {
 export async function getMedia(): Promise<MediaItem[]> {
   const res = await fetch(`${baseUrl}/media.json`);
   if (!res.ok) throw new Error("Failed to fetch media");
-  return res.json();
+  const raw = await res.json();
+  const { valid, errors } = validateMediaItems(raw);
+  if (errors.length) {
+    console.warn("Media validation errors:", errors);
+  }
+  return valid;
 }
