@@ -69,7 +69,7 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 w-44"
             >
               <User className="h-4 w-4" />
               <span className="font-manrope text-sm">

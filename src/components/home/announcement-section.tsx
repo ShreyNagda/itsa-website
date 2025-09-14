@@ -8,12 +8,15 @@ import {
   XCircle,
 } from "lucide-react";
 import { Announcement } from "@/lib/supabase/types";
+import { usePathname } from "next/navigation";
 
 export default function AnnouncementRibbon({
   announcements,
 }: {
   announcements: Announcement[];
 }) {
+  const pathname = usePathname();
+
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -28,7 +31,7 @@ export default function AnnouncementRibbon({
   const current = announcements[index];
 
   const getIcon = (type: Announcement["type"]) => {
-    const commonClass = "w-5 h-5 md:w-7 md:h-7";
+    const commonClass = "w-4 h-4 md:w-5 md:h-5";
     switch (type) {
       case "info":
         return <Info className={"text-white " + commonClass} />;
@@ -43,12 +46,18 @@ export default function AnnouncementRibbon({
     }
   };
 
+  if (pathname.includes("/admin")) {
+    return null;
+  }
+
   return (
-    <div className="bg-gray-900 text-gray-100 text-sm py-2 px-4 flex items-center justify-start md:justify-center gap-1">
-      {getIcon(current.type)}
-      <span className="transition-opacity duration-500 ease-in-out md:text-lg line-clamp-1 ">
-        {current.content}
-      </span>
+    <div className="sticky top-0 z-50 ">
+      <div className="bg-gray-900 text-gray-100 text-sm py-2 px-4 flex items-center justify-start md:justify-center gap-1 ">
+        {getIcon(current.type)}
+        <span className="transition-opacity duration-500 ease-in-out line-clamp-1 ">
+          {current.content}
+        </span>
+      </div>
     </div>
   );
 }

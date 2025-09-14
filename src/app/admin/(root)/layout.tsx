@@ -17,17 +17,22 @@ export default async function AdminLayout({
 
   return (
     <>
+      {/* Mobile/Tablet blocker */}
+      <div className="fixed inset-0 z-[100] bg-background/90 backdrop-blur-sm lg:hidden flex flex-col items-center justify-center text-center p-6">
+        <div className="flex items-center gap-2 mb-4 text-primary">
+          <Laptop className="w-6 h-6" />
+          <div className="w-[1px] h-6 bg-primary/60"></div>
+          <Monitor className="w-6 h-6" />
+        </div>
+        <span className="text-lg font-medium text-muted-foreground">
+          Please access the Admin Dashboard on a desktop or laptop.
+        </span>
+      </div>
+
+      {/* Desktop Admin Layout */}
       <div className="min-h-screen bg-background hidden lg:block">
         <AdminHeader userEmail={adminUser?.email || ""} />
         <main className="container mx-auto px-4 py-8">{children}</main>
-      </div>
-      <div className="bg-background min-h-screen lg:hidden flex flex-col items-center justify-center">
-        <div className="flex items-center gap-2 ">
-          <Laptop />
-          <div className="w-[1px] h-4 rounded border border-black/80"></div>
-          <Monitor />
-        </div>
-        <span>Access on a desktop or a laptop</span>
       </div>
     </>
   );

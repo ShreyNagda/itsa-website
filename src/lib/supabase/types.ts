@@ -39,14 +39,21 @@ export interface Database {
 }
 
 export type MediaItem = {
+  id: string;
   url: string;
-  title: string;
   type: "image" | "video";
+  title?: string;
 };
 
 export type Announcement = {
   content: string;
   type: "info" | "warning" | "success" | "error";
+};
+
+export type GalleryGroup = {
+  title: string;
+  thumbnail: string;
+  images: { url: string; title?: string }[];
 };
 
 export type EventStatus = "upcoming" | "ongoing" | "completed";

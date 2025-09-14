@@ -4,9 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, MapPin, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { Header } from "@/components/common/header";
 import { Footer } from "@/components/common/footer";
+import type { MediaItem } from "@/lib/supabase/types";
+import { MediaGrid } from "@/components/common/image-grid";
 
 interface EventPageProps {
   params: {
@@ -15,28 +16,25 @@ interface EventPageProps {
 }
 
 export default async function EventPage({ params }: EventPageProps) {
-  const event = await getEventById(params.id);
+  const { id } = await params;
+  const event = await getEventById(id);
 
-  if (!event) {
-    notFound();
-  }
+  if (!event) notFound();
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-  };
 
-  const formatTime = (timeString: string) => {
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-US", {
+  const formatTime = (timeString: string) =>
+    new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
     });
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -67,6 +65,15 @@ export default async function EventPage({ params }: EventPageProps) {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
+
+  // Map event.media (array of URLs) to MediaItem type
+  const mediaItems: MediaItem[] =
+    event.media?.map((url, index) => ({
+      id: `${index}-${url}`,
+      url,
+      type: /\.(mp4|webm|ogg)$/i.test(url) ? "video" : "image",
+      title: event.title || "",
+    })) || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -113,26 +120,13 @@ export default async function EventPage({ params }: EventPageProps) {
                   <span>{event.location}</span>
                 </div>
               )}
-              {/* {event.max_participants && (
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  <span>Max {event.max_participants} participants</span>
-                </div>
-              )} */}
             </div>
           </div>
 
-          {/* Event Image */}
-          {event.media && (
+          {/* Event Media Grid */}
+          {mediaItems.length > 0 && (
             <div className="mb-8">
-              <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden">
-                <Image
-                  src={event.media[0] || "/placeholder.svg"}
-                  alt={event.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
+              <MediaGrid media={mediaItems} />
             </div>
           )}
 
@@ -185,29 +179,6 @@ export default async function EventPage({ params }: EventPageProps) {
                 )}
               </div>
             </div>
-
-            {/* {event.max_participants && (
-              <div className="bg-card rounded-lg p-6 border">
-                <h3 className="text-lg font-semibold text-primary mb-3">
-                  Participation
-                </h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      Max Participants:
-                    </span>
-                    <span className="font-medium">
-                      {event.max_participants}
-                    </span>
-                  </div>
-                  <div className="mt-4">
-                    <p className="text-muted-foreground text-xs">
-                      Contact ITSA for registration details and availability.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )} */}
           </div>
         </div>
       </main>

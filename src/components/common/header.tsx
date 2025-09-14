@@ -21,8 +21,8 @@ export function HeaderComponent() {
   ];
   const [open, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-50 w-full shadow-sm bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex items-center justify-between px-4 py-6">
+    <header className="sticky top-[36px] z-50 w-full shadow-sm bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto flex items-center justify-between px-4 py-4">
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/itsa_logo.png"

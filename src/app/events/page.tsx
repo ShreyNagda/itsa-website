@@ -10,25 +10,16 @@ export default async function EventsPage() {
   const upcomingEvents = allEvents.filter(
     (event) => event.status === "upcoming"
   );
-  const ongoingEvents = allEvents.filter((event) => event.status === "ongoing");
   const pastEvents = allEvents.filter((event) => event.status === "completed");
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-primary mb-4">ITSA Events</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Stay updated with all Information Technology Student Association
-            events, workshops, and activities designed for students, by
-            students.
-          </p>
-        </div>
         {/* Upcoming Events */}
         <EventsSection title="Upcoming Events" events={upcomingEvents} />
         {/* Ongoing Events */}
-        <EventsSection title="Ongoing Events" events={ongoingEvents} />
+        {/* <EventsSection title="Ongoing Events" events={ongoingEvents} /> */}
         {/* Past Events */}
         <EventsSection title="Past Events" events={pastEvents} />
         {allEvents.length === 0 && (

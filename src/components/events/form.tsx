@@ -27,6 +27,7 @@ import { supabase } from "@/lib/supabase/client";
 import type { Event } from "@/lib/supabase/types";
 import Image from "next/image";
 import { toast } from "sonner";
+import { Badge } from "../ui/badge";
 
 interface SubmitButtonProps {
   isEditing: boolean;
@@ -80,7 +81,7 @@ export default function EventForm({
 }: EventFormProps) {
   const router = useRouter();
   const [state, formAction] = useActionState(action, null);
-
+  console.log(event);
   const [selectedFiles, setSelectedFiles] = useState<FileWithPreview[]>(
     event?.media?.map((url) => ({ preview: url })) || []
   );
@@ -99,7 +100,7 @@ export default function EventForm({
     const uploadedFiles: (FileWithPreview | null)[] = await Promise.all(
       newFiles.map(async (file) => {
         const fileName = file.name.split(" ").join("-");
-        const filePath = `${fileName}`;
+        const filePath = `event/${fileName}`;
 
         const { error } = await supabase.storage
           .from("media")
@@ -176,9 +177,25 @@ export default function EventForm({
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <Button variant="ghost" className="w-fit" onClick={() => router.back()}>
-          <ArrowLeft />
-        </Button>
+        <div className="flex justify-between items-center">
+          <Button
+            variant="ghost"
+            className="w-fit"
+            onClick={() => router.back()}
+          >
+            <ArrowLeft />
+          </Button>
+          {event?.updated_at && (
+            <Badge variant={"secondary"}>
+              Updated At:{" "}
+              {new Date(event?.updated_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </Badge>
+          )}
+        </div>
         <CardTitle className="font-geist text-3xl font-bold">{title}</CardTitle>
         <CardDescription className="font-manrope text-muted-foreground">
           {description}
@@ -275,8 +292,7 @@ export default function EventForm({
                       {f.preview.match(/\.(mp4|webm|ogg)$/i) ? (
                         <video
                           src={f.preview}
-                          className="w-full h-full object-cover"
-                          controls
+                          className="w-full h-full object-contain"
                         />
                       ) : (
                         <Image
