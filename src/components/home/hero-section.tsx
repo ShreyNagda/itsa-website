@@ -9,10 +9,10 @@ export default function HeroSection() {
           <h1 className="font-geist text-3xl md:text-6xl font-bold text-primary mb-6 text-wrap">
             Information Technology
             <br />
-            Student Association
+            
           </h1>
           <p className="font-manrope text-lg md:text-2xl text-muted-foreground mb-4">
-            For the Students, By the Students
+            To be a prime center of excellence by transforming students into globally competent IT professionals
           </p>
           <p className="font-manrope text-base text-foreground mb-8 max-w-2xl mx-auto">
             Join our community of passionate IT students. Discover

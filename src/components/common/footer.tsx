@@ -55,14 +55,14 @@ export function FooterComponent() {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="font-geist text-lg font-bold">ITSA</span>
+                <span className="font-geist text-lg font-bold">Department of Information Technology</span>
                 <span className="font-manrope text-sm opacity-80">
-                  Information Technology Student Association
+                  AP SHAH INSTITUTE OF TECHNOLOGY
                 </span>
               </div>
             </div>
             <p className="font-manrope text-sm opacity-80 mb-4 max-w-md">
-              For the Students, By the Students. Join our community of
+              Join our community of
               passionate IT students and advance your career in technology.
             </p>
           </div>
@@ -130,8 +130,13 @@ export function FooterComponent() {
         </div>
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center">
           <p className="font-manrope text-sm opacity-80">
-            © 2025 Information Technology Student Association. All rights
-            reserved.
+            <strong>Developed by:</strong>
+          </p>
+          <p className="font-manrope text-sm opacity-80">
+            Tanishq Shelar & Shrey Nagda
+          </p>
+          <p className="font-manrope text-sm opacity-80 mt-2">
+            © 2025 A.P SHAH INSTITUTE OF TECHNOLOGY. All rights reserved.
           </p>
         </div>
       </div>

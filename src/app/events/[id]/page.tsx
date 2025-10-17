@@ -81,17 +81,17 @@ export default async function EventPage({ params }: EventPageProps) {
       <main className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <Link href="/events">
-            <Button variant="ghost" className="gap-2">
+            <Button variant="ghost" className="gap-2 font-manrope">
               <ArrowLeft className="w-4 h-4" />
               Back to Events
             </Button>
           </Link>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {/* Event Header */}
-          <div className="mb-8">
-            <div className="flex flex-wrap gap-2 mb-4">
+          <div className="mb-8 text-center">
+            <div className="flex flex-wrap justify-center gap-2 mb-4">
               <Badge className={getStatusColor(event.status)}>
                 {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
               </Badge>
@@ -101,83 +101,109 @@ export default async function EventPage({ params }: EventPageProps) {
               </Badge>
             </div>
 
-            <h1 className="text-4xl font-bold text-primary mb-4">
+            <h1 className="text-4xl md:text-5xl font-geist font-bold text-primary mb-6">
               {event.title}
             </h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-muted-foreground">
+            <div className="flex flex-wrap justify-center gap-6 text-muted-foreground font-manrope">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-5 h-5" />
                 <span>{formatDate(event.event_date)}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
+                <Clock className="w-5 h-5" />
                 <span>{formatTime(event.event_time)}</span>
               </div>
               {event.location && (
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="w-5 h-5" />
                   <span>{event.location}</span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Event Media Grid */}
-          {mediaItems.length > 0 && (
-            <div className="mb-8">
-              <MediaGrid media={mediaItems} />
-            </div>
-          )}
-
-          {/* Event Description */}
-          <div className="bg-card rounded-lg p-6 border">
-            <h2 className="text-2xl font-semibold text-primary mb-4">
-              About This Event
-            </h2>
-            <div className="prose prose-gray max-w-none">
-              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                {event.description}
-              </p>
-            </div>
-          </div>
-
-          {/* Event Details */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-card rounded-lg p-6 border">
-              <h3 className="text-lg font-semibold text-primary mb-3">
-                Event Details
-              </h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Status:</span>
-                  <span className="font-medium capitalize">{event.status}</span>
+          {/* Main Content Layout - Event Info Left, Media Right */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* Left Column - Event Information */}
+            <div className="space-y-6">
+              {/* Event Description */}
+              <div className="bg-card rounded-lg p-6 border shadow-sm">
+                <h2 className="text-2xl font-geist font-semibold text-primary mb-4">
+                  About This Event
+                </h2>
+                <div className="prose prose-gray max-w-none">
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap font-manrope">
+                    {event.description}
+                  </p>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Category:</span>
-                  <span className="font-medium capitalize">
-                    {event.category}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Date:</span>
-                  <span className="font-medium">
-                    {formatDate(event.event_date)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Time:</span>
-                  <span className="font-medium">
-                    {formatTime(event.event_time)}
-                  </span>
-                </div>
-                {event.location && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Location:</span>
-                    <span className="font-medium">{event.location}</span>
-                  </div>
-                )}
               </div>
+
+              {/* Event Details */}
+              <div className="bg-card rounded-lg p-6 border shadow-sm">
+                <h3 className="text-xl font-geist font-semibold text-primary mb-4">
+                  Event Details
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="text-muted-foreground font-manrope">Status:</span>
+                    <Badge className={getStatusColor(event.status)} variant="outline">
+                      {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="text-muted-foreground font-manrope">Category:</span>
+                    <Badge className={getCategoryColor(event.category)} variant="outline">
+                      {event.category.charAt(0).toUpperCase() + event.category.slice(1)}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground font-manrope">Date:</span>
+                    <span className="font-medium font-manrope text-right">
+                      {formatDate(event.event_date)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground font-manrope">Time:</span>
+                    <span className="font-medium font-manrope">
+                      {formatTime(event.event_time)}
+                    </span>
+                  </div>
+                  {event.location && (
+                    <div className="flex justify-between py-2">
+                      <span className="text-muted-foreground font-manrope">Location:</span>
+                      <span className="font-medium font-manrope text-right">
+                        {event.location}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Event Media */}
+            <div className="space-y-6">
+              {mediaItems.length > 0 ? (
+                <div className="bg-card rounded-lg p-6 border shadow-sm">
+                  <h3 className="text-xl font-geist font-semibold text-primary mb-4">
+                    Event Gallery
+                  </h3>
+                  <MediaGrid 
+                    media={mediaItems} 
+                    columnsClassName="columns-1 sm:columns-2 gap-4 space-y-4"
+                  />
+                </div>
+              ) : (
+                <div className="bg-card rounded-lg p-8 border shadow-sm text-center">
+                  <div className="text-muted-foreground">
+                    <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <h3 className="text-lg font-geist font-medium mb-2">No Media Available</h3>
+                    <p className="font-manrope">
+                      Media for this event will be uploaded soon.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

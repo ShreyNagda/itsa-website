@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "For the students, By the students",
+  title: "IT APSIT",
   description:
     "ITSA is a department-level student association dedicated to fostering growth, learning, and community within the Information Technology field. We believe in creating opportunities for students to excel both academically and professionally.",
 };
