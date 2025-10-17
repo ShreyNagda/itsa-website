@@ -16,15 +16,18 @@ export async function getMediaFromDB(limit?: number) {
     return null;
   }
 
-  const items = (data ?? []) as any[];
+  const items = (data ?? []) as unknown[];
   console.log("Raw DB items:", items.length);
 
-  const mapped: MediaItem[] = items.map((row) => ({
-    id: row.id,
-    url: row.url,
-    type: row.type as "image" | "video",
-    title: row.title || undefined,
-  }));
+  const mapped: MediaItem[] = items.map((row: unknown) => {
+    const item = row as Record<string, unknown>;
+    return {
+      id: String(item.id),
+      url: String(item.url),
+      type: item.type as "image" | "video",
+      title: item.title ? String(item.title) : undefined,
+    };
+  });
 
   console.log("Mapped media items:", mapped.length);
   return limit ? mapped.slice(0, limit) : mapped;
@@ -38,11 +41,11 @@ export async function uploadMediaFiles(files: File[]) {
   // Find current max order
   const { data: rows } = await supabase.from("media").select("order");
   const currentMax = (rows ?? []).reduce(
-    (max: number, r: any) => Math.max(max, r.order ?? 0),
+    (max: number, r: Record<string, unknown>) => Math.max(max, (r.order as number) ?? 0),
     0
   );
 
-  const inserted: any[] = [];
+  const inserted: Record<string, unknown>[] = [];
   let nextOrder = currentMax + 1;
 
   for (const file of files) {
@@ -105,9 +108,9 @@ export async function deleteMediaById(id: string) {
   const { data, error } = await supabase.from("media").select("*").eq("id", id).single();
   if (error && Object.keys(error).length > 0) return { error };
 
-  const row = data as any;
+  const row = data as Record<string, unknown>;
   const bucket = "media";
-  const path = row.path;
+  const path = String(row.path);
 
   // Delete storage file
   const { error: remErr } = await supabase.storage.from(bucket).remove([path]);

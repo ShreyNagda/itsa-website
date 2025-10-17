@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import type { MediaItem } from "@/lib/supabase/types";
 import { Button } from "@/components/ui/button";
-import { X, Upload, Trash } from "lucide-react";
+import { Upload, Trash } from "lucide-react";
 
 interface AdminMediaManagerProps {
   initialMedia: MediaItem[];
@@ -99,7 +99,6 @@ export default function AdminMediaManager({ initialMedia }: AdminMediaManagerPro
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={item.url} alt={item.title} className="w-full h-full object-cover" />
                 ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
                   <video src={item.url} className="w-full h-full object-cover" />
                 )}
               </div>

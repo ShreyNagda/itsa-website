@@ -12,9 +12,10 @@ export async function POST(request: Request) {
       const ids: string[] = body.ids || [];
       await reorderMediaByIds(ids);
       return NextResponse.json({ success: true });
-    } catch (e: any) {
-      console.error("Reorder error:", e);
-      return NextResponse.json({ error: e?.message || String(e) }, { status: 500 });
+    } catch (e: unknown) {
+      const error = e as Error;
+      console.error("Reorder error:", error);
+      return NextResponse.json({ error: error?.message || String(e) }, { status: 500 });
     }
   }
 
@@ -31,9 +32,10 @@ export async function POST(request: Request) {
     const inserted = await uploadMediaFiles(files);
     console.log("Upload successful:", inserted);
     return NextResponse.json({ inserted });
-  } catch (e: any) {
-    console.error("Upload error:", e);
-    return NextResponse.json({ error: e?.message || String(e) }, { status: 500 });
+  } catch (e: unknown) {
+    const error = e as Error;
+    console.error("Upload error:", error);
+    return NextResponse.json({ error: error?.message || String(e) }, { status: 500 });
   }
 }
 
@@ -46,7 +48,8 @@ export async function DELETE(request: Request) {
     const res = await deleteMediaById(id);
     if (res.error) return NextResponse.json({ error: res.error }, { status: 500 });
     return NextResponse.json({ success: true });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || String(e) }, { status: 500 });
+  } catch (e: unknown) {
+    const error = e as Error;
+    return NextResponse.json({ error: error?.message || String(e) }, { status: 500 });
   }
 }

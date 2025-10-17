@@ -1,4 +1,4 @@
-import { SectionHeading } from "@/components/common/section-heading";
+
 import { getMediaFromStorage } from "@/lib/supabase/queries";
 import AdminMediaManager from "./media-manager";
 

@@ -63,21 +63,37 @@ export async function getEventById(id: string) {
 }
 // Ensure we always fetch with an absolute URL on the server.
 // Priority: explicit NEXT_PUBLIC_SITE_URL -> VERCEL_URL -> localhost with PORT fallback.
-const baseUrl = (() => {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (explicit) return explicit;
+// const baseUrl = (() => {
+//   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+//   if (explicit) return explicit;
 
-  const vercel = process.env.VERCEL_URL;
-  if (vercel) return `https://${vercel.replace(/\/$/, "")}`;
+//   const vercel = process.env.VERCEL_URL;
+//   if (vercel) return `https://${vercel.replace(/\/$/, "")}`;
 
-  const port = process.env.PORT || "3000";
-  return `http://localhost:${port}`;
-})();
+//   const port = process.env.PORT || "3000";
+//   return `http://localhost:${port}`;
+// })();
 
 export async function getAnnouncements(): Promise<Announcement[]> {
-  const res = await fetch(`${baseUrl}/announcements.json`);
-  if (!res.ok) throw new Error("Failed to fetch announcements");
-  return res.json();
+  try {
+    // Check if we're in a server environment (build time or server-side)
+    if (typeof window === 'undefined') {
+      // Server-side: read from filesystem directly
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const filePath = path.join(process.cwd(), 'public', 'announcements.json');
+      const fileContents = await fs.readFile(filePath, 'utf8');
+      return JSON.parse(fileContents);
+    } else {
+      // Client-side: use fetch
+      const res = await fetch('/announcements.json');
+      if (!res.ok) throw new Error("Failed to fetch announcements");
+      return res.json();
+    }
+  } catch (error) {
+    console.warn('Failed to load announcements:', error);
+    return [];
+  }
 }
 
 // export async function getMedia(): Promise<MediaItem[]> {

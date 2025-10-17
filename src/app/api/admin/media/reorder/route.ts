@@ -7,7 +7,8 @@ export async function POST(request: Request) {
     const ids: string[] = body.ids || [];
     await reorderMediaByIds(ids);
     return NextResponse.json({ success: true });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || String(e) }, { status: 500 });
+  } catch (e: unknown) {
+    const error = e as Error;
+    return NextResponse.json({ error: error?.message || String(e) }, { status: 500 });
   }
 }
