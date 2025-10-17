@@ -75,24 +75,63 @@ export async function getEventById(id: string) {
 // })();
 
 export async function getAnnouncements(): Promise<Announcement[]> {
+  // Fallback announcements in case of any errors
+  const fallbackAnnouncements: Announcement[] = [
+    { content: "Welcome to IT Department", type: "info" }
+  ];
+
   try {
     // Check if we're in a server environment (build time or server-side)
     if (typeof window === 'undefined') {
       // Server-side: read from filesystem directly
-      const fs = await import('fs/promises');
-      const path = await import('path');
-      const filePath = path.join(process.cwd(), 'public', 'announcements.json');
-      const fileContents = await fs.readFile(filePath, 'utf8');
-      return JSON.parse(fileContents);
+      try {
+        const fs = await import('fs/promises');
+        const path = await import('path');
+        
+        // Try multiple possible paths for the announcements file
+        const possiblePaths = [
+          path.join(process.cwd(), 'public', 'announcements.json'),
+          path.join(process.cwd(), 'announcements.json'),
+          path.join(__dirname, '../../public/announcements.json'),
+        ];
+        
+        for (const filePath of possiblePaths) {
+          try {
+            await fs.access(filePath);
+            const fileContents = await fs.readFile(filePath, 'utf8');
+            const announcements = JSON.parse(fileContents);
+            return Array.isArray(announcements) ? announcements : fallbackAnnouncements;
+          } catch {
+            // Continue to next path
+            continue;
+          }
+        }
+        
+        console.warn('announcements.json file not found in any expected location, using fallback');
+        return fallbackAnnouncements;
+        
+      } catch (fsError) {
+        console.warn('Failed to read announcements from filesystem:', fsError);
+        return fallbackAnnouncements;
+      }
     } else {
       // Client-side: use fetch
-      const res = await fetch('/announcements.json');
-      if (!res.ok) throw new Error("Failed to fetch announcements");
-      return res.json();
+      try {
+        const res = await fetch('/announcements.json');
+        if (!res.ok) {
+          console.warn('Failed to fetch announcements via HTTP, using fallback');
+          return fallbackAnnouncements;
+        }
+        const announcements = await res.json();
+        return Array.isArray(announcements) ? announcements : fallbackAnnouncements;
+      } catch (fetchError) {
+        console.warn('Fetch error for announcements:', fetchError);
+        return fallbackAnnouncements;
+      }
     }
   } catch (error) {
     console.warn('Failed to load announcements:', error);
-    return [];
+    return fallbackAnnouncements;
   }
 }
 
