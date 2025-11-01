@@ -16,8 +16,9 @@ export function HeaderComponent() {
   const links = [
     { url: "/", text: "Home" },
     { url: "/events", text: "Events" },
+    { url: "/explore", text: "Explore" },
     { url: "/about", text: "About" },
-    { url: "/contact", text: "Contact" },
+    { url: "/contact", text: "ITSA" },
   ];
   const [open, setOpen] = useState(false);
   return (
@@ -26,7 +27,7 @@ export function HeaderComponent() {
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/itsa_logo.png"
-            alt="ITSA Logo"
+            alt="IT Logo"
             width={40}
             height={40}
             className="h-10 w-10"
@@ -34,10 +35,10 @@ export function HeaderComponent() {
           />
           <div className="flex flex-col">
             <span className="font-geist text-lg font-bold text-primary">
-              ITSA
+              IT Department
             </span>
             <span className="font-manrope text-xs text-muted-foreground">
-              Information Technology
+              A.P SHAH INSTITUTE OF TECHNOLOGY
             </span>
           </div>
         </Link>

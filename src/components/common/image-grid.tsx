@@ -2,6 +2,7 @@
 
 import { MediaItem } from "@/lib/supabase/types";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,13 +17,58 @@ interface MediaGridProps {
   media: MediaItem[];
   limit?: number;
   onItemClick?: (item: MediaItem) => void;
+  // Optional override for column-based masonry layout classes
+  columnsClassName?: string;
 }
 
-export function MediaGrid({ media, limit, onItemClick }: MediaGridProps) {
+export function MediaGrid({
+  media,
+  limit,
+  onItemClick,
+  columnsClassName,
+}: MediaGridProps) {
   const displayed = limit ? media.slice(0, limit) : media;
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Auto play/pause videos when in/out of view for better UX
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const videos = Array.from(container.querySelectorAll("video"));
+    if (videos.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const vid = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            // Try playing; ignore errors (e.g., browser policies)
+            vid.play().catch(() => {});
+          } else {
+            vid.pause();
+          }
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    videos.forEach((v) => observer.observe(v));
+
+    return () => {
+      videos.forEach((v) => observer.unobserve(v));
+      observer.disconnect();
+    };
+  }, [displayed]);
 
   return (
-    <div className="columns-2 sm:columns-3 md:columns-4 gap-4 space-y-4">
+    <div
+      ref={containerRef}
+      className={
+        columnsClassName ||
+        "columns-2 sm:columns-3 md:columns-4 gap-4 space-y-4"
+      }
+    >
       {displayed.map((item) =>
         onItemClick ? (
           <div
@@ -45,6 +91,7 @@ export function MediaGrid({ media, limit, onItemClick }: MediaGridProps) {
                 autoPlay
                 loop
                 playsInline
+                preload="metadata"
                 className="w-full h-auto object-cover rounded-lg"
               />
             )}
@@ -68,6 +115,7 @@ export function MediaGrid({ media, limit, onItemClick }: MediaGridProps) {
                     autoPlay
                     loop
                     playsInline
+                    preload="metadata"
                     className="w-full h-auto object-cover rounded-lg"
                   />
                 )}
@@ -102,6 +150,7 @@ export function MediaGrid({ media, limit, onItemClick }: MediaGridProps) {
                     muted
                     loop
                     playsInline
+                    preload="metadata"
                     className="h-screen rounded-lg"
                   />
                 )}

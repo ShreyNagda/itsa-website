@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import AdminStatsCard from "@/components/admin/stats-card";
 import AdminRecentEvents from "@/components/admin/recent-events";
-import { Calendar, Users, TrendingUp, Plus } from "lucide-react";
+import { Calendar, Users, TrendingUp, Plus, Upload } from "lucide-react";
 import Link from "next/link";
 import { getEvents } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
@@ -122,6 +122,16 @@ export default async function AdminDashboard() {
               <Link href="/admin/users">
                 <Users className="h-4 w-4 mr-2" />
                 Manage Admin Users
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="w-full justify-start font-manrope bg-transparent"
+            >
+              <Link href="/admin/media">
+                <Upload className="h-4 w-4 mr-2" />
+                Manage Media
               </Link>
             </Button>
             <Button

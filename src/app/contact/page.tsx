@@ -3,6 +3,7 @@ import { Footer } from "@/components/common/footer";
 import { SectionHeading } from "@/components/common/section-heading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Fragment } from "react";
+import Image from "next/image";
 
 type Person = {
   name: string;
@@ -30,8 +31,8 @@ const members: Person[] = [
 ];
 
 const heads: Person[] = [
-  { name: "Shrey Nagda", email: "shreynagda2714@gmail.com", role: "Technical Head" },
-  { name: "Tanishq Shelar", email: "itanishelar@gmail.com", role: "Technical Co-Head" },
+  { name: "Shrey Nagda", email: "", role: "Technical Head" },
+  { name: "Tanishq Shelar", email: "", role: "Technical Co-Head" },
 ];
 
 export default function ContactPage() {
@@ -40,6 +41,36 @@ export default function ContactPage() {
       <Header />
       <main className="py-16">
         <div className="container mx-auto px-4 max-w-5xl">
+          {/* Team Picture Section */}
+          <div className="mb-16 text-center">
+            <div className="relative mx-auto max-w-4xl overflow-hidden rounded-2xl shadow-2xl bg-gradient-to-br from-primary/5 to-primary/10 p-1">
+              <div className="relative overflow-hidden rounded-xl bg-white dark:bg-gray-900">
+                <Image
+                  src="/itsa25team.jpg"
+                  alt="ITSA Team Photo"
+                  width={1200}
+                  height={600}
+                  className="w-full h-[300px] md:h-[400px] lg:h-[500px] object-cover transition-transform duration-500 hover:scale-105"
+                  priority
+                />
+                {/* Overlay with team info */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end">
+                  <div className="p-6 md:p-8 text-white">
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">
+                      ITSA Team 2025-26
+                    </h2>
+                    <p className="text-sm md:text-base opacity-90">
+                      United in Innovation, Driven by Excellence
+                    </p>
+                  </div>
+                </div>
+                {/* Decorative corner elements */}
+                <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-white/30 rounded-tr-lg"></div>
+                <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-white/30 rounded-bl-lg"></div>
+              </div>
+            </div>
+          </div>
+
           <SectionHeading title="ITSA TEAM" />
           <p className="font-manrope text-muted-foreground mb-6">
             Meet the official ITSA team for 2025-26

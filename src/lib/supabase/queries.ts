@@ -29,12 +29,13 @@ export async function getEvents(
 
   const { data, error } = await query;
 
-  if (error) {
+  // Only log if error has actual content (not empty object)
+  if (error && Object.keys(error).length > 0) {
     console.error("Error fetching events:", error);
     return [];
   }
 
-  return data as Event[];
+  return (data ?? []) as Event[];
 }
 
 export async function getUpcomingEvents(orderBy?: OrderBy) {
@@ -53,7 +54,7 @@ export async function getEventById(id: string) {
     .eq("id", id)
     .single();
 
-  if (error) {
+  if (error && Object.keys(error).length > 0) {
     console.error("Error fetching event:", error);
     return null;
   }
@@ -62,21 +63,76 @@ export async function getEventById(id: string) {
 }
 // Ensure we always fetch with an absolute URL on the server.
 // Priority: explicit NEXT_PUBLIC_SITE_URL -> VERCEL_URL -> localhost with PORT fallback.
-const baseUrl = (() => {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (explicit) return explicit;
+// const baseUrl = (() => {
+//   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+//   if (explicit) return explicit;
 
-  const vercel = process.env.VERCEL_URL;
-  if (vercel) return `https://${vercel.replace(/\/$/, "")}`;
+//   const vercel = process.env.VERCEL_URL;
+//   if (vercel) return `https://${vercel.replace(/\/$/, "")}`;
 
-  const port = process.env.PORT || "3000";
-  return `http://localhost:${port}`;
-})();
+//   const port = process.env.PORT || "3000";
+//   return `http://localhost:${port}`;
+// })();
 
 export async function getAnnouncements(): Promise<Announcement[]> {
-  const res = await fetch(`${baseUrl}/announcements.json`);
-  if (!res.ok) throw new Error("Failed to fetch announcements");
-  return res.json();
+  // Fallback announcements in case of any errors
+  const fallbackAnnouncements: Announcement[] = [
+    { content: "Welcome to IT Department", type: "info" }
+  ];
+
+  try {
+    // Check if we're in a server environment (build time or server-side)
+    if (typeof window === 'undefined') {
+      // Server-side: read from filesystem directly
+      try {
+        const fs = await import('fs/promises');
+        const path = await import('path');
+        
+        // Try multiple possible paths for the announcements file
+        const possiblePaths = [
+          path.join(process.cwd(), 'public', 'announcements.json'),
+          path.join(process.cwd(), 'announcements.json'),
+          path.join(__dirname, '../../public/announcements.json'),
+        ];
+        
+        for (const filePath of possiblePaths) {
+          try {
+            await fs.access(filePath);
+            const fileContents = await fs.readFile(filePath, 'utf8');
+            const announcements = JSON.parse(fileContents);
+            return Array.isArray(announcements) ? announcements : fallbackAnnouncements;
+          } catch {
+            // Continue to next path
+            continue;
+          }
+        }
+        
+        console.warn('announcements.json file not found in any expected location, using fallback');
+        return fallbackAnnouncements;
+        
+      } catch (fsError) {
+        console.warn('Failed to read announcements from filesystem:', fsError);
+        return fallbackAnnouncements;
+      }
+    } else {
+      // Client-side: use fetch
+      try {
+        const res = await fetch('/announcements.json');
+        if (!res.ok) {
+          console.warn('Failed to fetch announcements via HTTP, using fallback');
+          return fallbackAnnouncements;
+        }
+        const announcements = await res.json();
+        return Array.isArray(announcements) ? announcements : fallbackAnnouncements;
+      } catch (fetchError) {
+        console.warn('Fetch error for announcements:', fetchError);
+        return fallbackAnnouncements;
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to load announcements:', error);
+    return fallbackAnnouncements;
+  }
 }
 
 // export async function getMedia(): Promise<MediaItem[]> {
@@ -137,33 +193,70 @@ export async function getAnnouncements(): Promise<Announcement[]> {
 //   return groups;
 // }
 
+import { getMediaFromDB } from "./media";
+
 export async function getMediaFromStorage(limit?: number) {
+  console.log("getMediaFromStorage called");
+  
+  // Get items from both DB and storage, then merge them
+  let dbMedia: MediaItem[] = [];
+  let storageMedia: MediaItem[] = [];
+  
+  // Try to get media from DB (admin-managed)
+  try {
+    console.log("Trying to get media from DB...");
+    const db = await getMediaFromDB();
+    dbMedia = db || [];
+    console.log("DB media result:", dbMedia.length, "items");
+  } catch (e) {
+    console.log("DB fetch failed:", e);
+  }
+
+  // Also get files directly from storage
+  console.log("Fetching from storage...");
   const supabase = await createClient();
   const bucket = "media";
   const basePath = "featured_media";
 
-  const { data: files, error } = await supabase.storage
-    .from(bucket)
-    .list(basePath, { limit: 100 });
+  try {
+    const { data: files, error } = await supabase.storage
+      .from(bucket)
+      .list(basePath, { limit: 100 });
 
-  if (error) throw error;
-  const media: MediaItem[] =
-    files?.map((file) => {
-      const ext = file.name.split(".").pop()?.toLowerCase();
-      const isVideo = ["mp4", "mov", "webm", "avi"].includes(ext || "");
+    if (error) {
+      console.error("Storage list error:", error);
+    } else {
+      console.log("Storage files found:", files?.length || 0);
+      
+      storageMedia = files?.map((file) => {
+        const ext = file.name.split(".").pop()?.toLowerCase();
+        const isVideo = ["mp4", "mov", "webm", "avi"].includes(ext || "");
 
-      return {
-        id: file.id || file.name,
-        url: supabase.storage
-          .from(bucket)
-          .getPublicUrl(`${basePath}/${file.name}`).data.publicUrl,
-        type: isVideo ? "video" : "image",
-        title: file.name,
-      };
-    }) || [];
+        return {
+          id: file.id || file.name,
+          url: supabase.storage
+            .from(bucket)
+            .getPublicUrl(`${basePath}/${file.name}`).data.publicUrl,
+          type: isVideo ? "video" : "image",
+          title: file.name,
+        };
+      }) || [];
+    }
+  } catch (e) {
+    console.error("Storage fetch error:", e);
+  }
 
-  // Shuffle for Instagram-like feel
-  const shuffled = media.sort(() => Math.random() - 0.5);
+  // Merge DB and storage media, avoiding duplicates
+  // DB entries take precedence (they have order and better metadata)
+  const dbUrls = new Set(dbMedia.map(item => item.url));
+  const uniqueStorageMedia = storageMedia.filter(item => !dbUrls.has(item.url));
+  
+  const allMedia = [...dbMedia, ...uniqueStorageMedia];
+  console.log("Final media array:", allMedia.length, "items (", dbMedia.length, "from DB,", uniqueStorageMedia.length, "from storage)");
 
-  return limit ? shuffled.slice(0, limit) : shuffled;
+  // Shuffle storage-only items for Instagram-like feel, but keep DB items in order
+  const shuffledStorageMedia = uniqueStorageMedia.sort(() => Math.random() - 0.5);
+  const finalMedia = [...dbMedia, ...shuffledStorageMedia];
+
+  return limit ? finalMedia.slice(0, limit) : finalMedia;
 }
